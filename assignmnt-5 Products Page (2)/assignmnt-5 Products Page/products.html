@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WhiteBeardShop - Products</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .navbar {
+        background-color: black;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 20px;
+        align-items: center;
+      }
+
+      .logo {
+        height: 50px;
+      }
+
+      .category-bar {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 10px 0;
+      }
+
+      .category-bar button {
+        margin: 5px;
+        padding: 8px 16px;
+        border: none;
+        background-color: #008cba;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .category-bar button:hover {
+        background-color: #005f78;
+      }
+
+      .product-card {
+        width: 22%;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        margin: 10px;
+        text-align: center;
+      }
+
+      .product-card img {
+        max-width: 100px;
+        max-height: 100px;
+      }
+
+      .product-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      a.card-link {
+        text-decoration: none;
+        color: inherit;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>All Products</h1>
+
+    <div class="category-bar" id="category-bar"></div>
+    <div class="product-container" id="product-container"></div>
+
+    <script>
+      let allProducts = [];
+
+      fetch("https://dummyjson.com/products")
+        .then((res) => res.json())
+        .then((data) => {
+          allProducts = data.products;
+          displayCategories(allProducts);
+          displayProducts(allProducts);
+        })
+        .catch((err) => console.error("Error fetching products:", err));
+
+      function displayCategories(products) {
+        const catBar = document.getElementById("category-bar");
+        const uniqueCats = ["All", ...new Set(products.map((p) => p.category))];
+
+        uniqueCats.forEach((cat) => {
+          const btn = document.createElement("button");
+          btn.innerText = cat;
+          btn.onclick = () => {
+            const filtered =
+              cat === "All"
+                ? allProducts
+                : allProducts.filter((p) => p.category === cat);
+            displayProducts(filtered);
+          };
+          catBar.appendChild(btn);
+        });
+      }
+
+      function displayProducts(products) {
+        const container = document.getElementById("product-container");
+        container.innerHTML = "";
+
+        products.forEach((prod) => {
+          const card = document.createElement("div");
+          card.className = "product-card";
+          card.innerHTML = `
+          <a href="product.html?id=${prod.id}" class="card-link">
+            <img src="${prod.thumbnail}" alt="Product" />
+            <h3>${prod.title}</h3>
+            <p>₹${prod.price}</p>
+          </a>
+        `;
+          container.appendChild(card);
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Product Details</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .navbar {
+        background-color: black;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 20px;
+        align-items: center;
+      }
+
+      .nav-links a {
+        color: white;
+        margin-left: 15px;
+        text-decoration: none;
+      }
+
+      .product-detail {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+      }
+
+      .product-detail img {
+        max-width: 250px;
+        display: block;
+        margin-bottom: 15px;
+      }
+
+      .review {
+        border-top: 1px solid #eee;
+        padding-top: 10px;
+        margin-top: 10px;
+      }
+
+      .back-btn {
+        background-color: #0077cc;
+        color: white;
+        padding: 8px 14px;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        margin-top: 10px;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="navbar">
+      <div class="nav-links">
+        <a href="products.html" class="back-btn">← Back to Products</a>
+      </div>
+    </div>
+
+    <div class="product-detail" id="product-detail">Loading...</div>
+
+    <script>
+      const id = new URLSearchParams(window.location.search).get("id");
+
+      if (!id) {
+        document.getElementById("product-detail").innerText =
+          "Product not found!";
+      } else {
+        fetch(`https://dummyjson.com/products/${id}`)
+          .then((res) => res.json())
+          .then((product) => {
+            const div = document.getElementById("product-detail");
+            div.innerHTML = `
+            <h2>${product.title}</h2>
+            <center><img src="${
+              product.thumbnail
+            }" alt="Product Image" /></center>
+            <p><strong>Description:</strong> ${product.description}</p>
+            <p><strong>Price:</strong> ₹${product.price}</p>
+            <p><strong>Discount:</strong> ${product.discountPercentage}%</p>
+            <p><strong>Rating:</strong> ⭐ ${product.rating}</p>
+            <p><strong>Stock:</strong> ${product.stock}</p>
+            <p><strong>Brand:</strong> ${product.brand}</p>
+            <p><strong>Category:</strong> ${product.category}</p>
+            <p><strong>SKU:</strong> ${product.sku}</p>
+            <p><strong>Dimensions:</strong> ${product.dimensions?.width} x ${
+              product.dimensions?.height
+            } x ${product.dimensions?.depth} cm</p>
+            <p><strong>Warranty:</strong> ${product.warrantyInformation}</p>
+            <p><strong>Shipping:</strong> ${product.shippingInformation}</p>
+            <p><strong>Return Policy:</strong> ${product.returnPolicy}</p>
+            <p><strong>Availability:</strong> ${product.availabilityStatus}</p>
+            <hr>
+            <h3>Reviews:</h3>
+            ${
+              product.reviews?.length
+                ? product.reviews
+                    .map(
+                      (r) => `
+                  <div class="review">
+                    <strong>${r.reviewerName}</strong> — ⭐ ${r.rating}<br>
+                    <em>${r.comment}</em>
+                  </div>
+                `
+                    )
+                    .join("")
+                : "No reviews found."
+            }
+          `;
+          })
+          .catch((err) => {
+            console.error("Failed to fetch product", err);
+            document.getElementById("product-detail").innerText =
+              "Could not load product info.";
+          });
+      }
+    </script>
+  </body>
+</html>
